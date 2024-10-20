@@ -120,4 +120,3 @@ export class HomePage {
     this.router.navigate(["/usuarios"]);
   }
 }
-

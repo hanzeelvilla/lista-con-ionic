@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AlertController, IonModal } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./usuarios.page.scss'],
 })
 export class UsuariosPage implements OnInit {
+  @ViewChild(IonModal) modal: IonModal | undefined;
 
   nombre: string = "";
   direccion: string = "";
@@ -15,6 +16,7 @@ export class UsuariosPage implements OnInit {
   telefono: string = "";
   imagen: string = "";
   usuarios: Array<{ nombre: string; direccion: string; correo: string; telefono: string; imagen: string }> = [];
+  indexUsuarioEditado: number | null = null; // Para guardar el índice del producto que estamos editando
 
   constructor(private alertController: AlertController, private router: Router) {
     this.cargarProdcutosDeLocalStorage();
@@ -45,12 +47,44 @@ export class UsuariosPage implements OnInit {
     this.alerta("Agregado", "usuario agregado");
   }
 
-  editar() {
-    console.log("editar");
+  editar(index: number) {
+    const usuario = this.usuarios[index];
+    this.nombre = usuario.nombre;
+    this.direccion = usuario.direccion;
+    this.correo = usuario.correo;
+    this.telefono = usuario.telefono;
+    this.imagen = usuario.imagen;
+    this.indexUsuarioEditado = index; // Guardar el índice del usuario a editar
+    this.modal?.present(); // Abrir el modal
   }
 
-  eliminar() {
-    console.log("eliminar");
+  confirmarEdicion() {
+    if (this.indexUsuarioEditado !== null) {
+      // Actualizar el producto en la lista
+      this.usuarios[this.indexUsuarioEditado] = {
+        nombre: this.nombre,
+        direccion: this.direccion,
+        correo: this.correo,
+        telefono: this.telefono,
+        imagen: this.imagen
+      };
+      this.guardarEnLocalStorage(); // Guardar los cambios en LocalStorage
+      this.modal?.dismiss(); // Cerrar el modal
+      this.limpiarCampos();
+      this.indexUsuarioEditado = null;
+    }
+  }
+
+  cancelarEdicion() {
+    this.modal?.dismiss(); // Cerrar el modal sin hacer cambios
+    this.limpiarCampos();
+    this.indexUsuarioEditado = null;
+  }
+
+  eliminar(index: number) {
+    this.usuarios.splice(index, 1);
+    this.guardarEnLocalStorage();
+    this.alerta("Eliminado", "usuario eliminador correctamente");
   }
 
   async alerta(header: string, message: string) {
