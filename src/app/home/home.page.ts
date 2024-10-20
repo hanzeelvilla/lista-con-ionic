@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { AlertController, IonModal } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,7 @@ export class HomePage {
   productos: Array<{ nombre: string; descripcion: string; precioCompra: string; precioVenta: string; imagen: string }> = [];
   indexProductoEditado: number | null = null; // Para guardar el índice del producto que estamos editando
 
-  constructor(private alertController: AlertController) {
+  constructor(private alertController: AlertController, private router: Router) {
     this.cargarProdcutosDeLocalStorage();
   }
 
@@ -112,4 +113,11 @@ export class HomePage {
     if(productosLocalStorage)
       this.productos = JSON.parse(productosLocalStorage);
   }
+
+  /* ---------------------------- LOGICA NAVEGACION --------------------------- */
+
+  paginaUsuarios() {
+    this.router.navigate(["/usuarios"]);
+  }
 }
+
