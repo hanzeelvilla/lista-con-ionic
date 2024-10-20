@@ -12,6 +12,51 @@
   </ion-header>
 
   <ion-button (click)="paginaProductos()" shape="round" color="dark">
-    Lista de productos
+    Lista de usuarios
   </ion-button>
+
+  <ion-item>
+    <ion-input [(ngModel)]="nombre" label="Nombre" labelPlacement="stacked" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input [(ngModel)]="direccion" label="Dirección" labelPlacement="stacked" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item>
+  <ion-input [(ngModel)]="correo" label="Correo" labelPlacement="stacked" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item>
+  <ion-input [(ngModel)]="telefono" label="Telefono" labelPlacement="stacked" type="number"></ion-input>
+  </ion-item>
+
+  <ion-item>
+  <ion-input [(ngModel)]="imagen" label="URL de la imagen" labelPlacement="stacked" type="text"></ion-input>
+  </ion-item>
+
+  <ion-button (click)="guardar()" expand="block" shape="round" color="success">
+  Guardar
+  </ion-button>
+
+  <ion-list>
+    <ion-card *ngFor="let usuario of usuarios; let i = index">
+      <img [src]="usuario.imagen" alt="usuario.nombre" class="imgCard">
+      <ion-card-header>
+        <ion-card-title>{{ usuario.nombre }}</ion-card-title>
+        <ion-card-subtitle>Direccion: {{ usuario.direccion }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Correo: {{ usuario.correo }}</p>
+        <p>Telefono: {{ usuario.telefono }} </p>
+        <ion-button (click)="editar()" shape="round" color="primary">
+          Editar
+        </ion-button>
+        <ion-button (click)="eliminar()" shape="round" color="danger">
+          Eliminar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
 </ion-content>
