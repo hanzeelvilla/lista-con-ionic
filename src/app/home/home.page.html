@@ -1,20 +1,58 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Lista de Hanzeel</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Lista</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-item>
+      <ion-input [(ngModel)]="nombre" label="Nombre" labelPlacement="stacked" type="text"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input [(ngModel)]="descripcion" label="Descripción" labelPlacement="stacked" type="text"></ion-input>
+</ion-item>
+
+<ion-item>
+  <ion-input [(ngModel)]="precioCompra" label="Precio compra" labelPlacement="stacked" type="number"></ion-input>
+</ion-item>
+
+<ion-item>
+  <ion-input [(ngModel)]="precioVenta" label="Precio venta" labelPlacement="stacked" type="number"></ion-input>
+</ion-item>
+
+<ion-item>
+  <ion-input [(ngModel)]="imagen" label="URL de la imagen" labelPlacement="stacked" type="text"></ion-input>
+</ion-item>
+
+<ion-button (click)="guardar()" expand="block" shape="round" color="success">
+  Guardar
+</ion-button>
+
+<ion-list>
+  <ion-card *ngFor="let producto of productos; let i = index">
+    <img [src]="producto.imagen" alt="producto.nombre" class="imgCard">
+    <ion-card-header>
+      <ion-card-title>{{ producto.nombre }}</ion-card-title>
+      <ion-card-subtitle>{{ producto.descripcion }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Precio Compra: {{ producto.precioCompra }}</p>
+      <p>Precio Venta: {{ producto.precioVenta}} </p>
+      <ion-button (click)="editar()" shape="round" color="primary">
+        Editar
+      </ion-button>
+      <ion-button (click)="eliminar(i)" shape="round" color="danger">
+        Eliminar
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-list>
+
 </ion-content>
