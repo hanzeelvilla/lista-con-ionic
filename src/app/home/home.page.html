@@ -15,6 +15,9 @@
     Lista de usuarios
   </ion-button>
 
+  <!-- Barra de búsqueda -->
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="buscar($event)" placeholder="Buscar productos"></ion-searchbar>
+
   <ion-item>
       <ion-input [(ngModel)]="nombre" label="Nombre" labelPlacement="stacked" type="text"></ion-input>
   </ion-item>
@@ -40,7 +43,7 @@
 </ion-button>
 
 <ion-list>
-  <ion-card *ngFor="let producto of productos; let i = index">
+  <ion-card *ngFor="let producto of productosFiltrados; let i = index">
     <img [src]="producto.imagen" alt="producto.nombre" class="imgCard">
     <ion-card-header>
       <ion-card-title>{{ producto.nombre }}</ion-card-title>
@@ -59,6 +62,7 @@
   </ion-card>
 </ion-list>
 
+<!-- Modal para edición de producto -->
 <ion-modal #modal>
   <ng-template>
     <ion-header>

@@ -16,7 +16,9 @@ export class HomePage {
   precioVenta: string = "";
   imagen: string = "";
   productos: Array<{ nombre: string; descripcion: string; precioCompra: string; precioVenta: string; imagen: string }> = [];
-  indexProductoEditado: number | null = null; // Para guardar el índice del producto que estamos editando
+  productosFiltrados: Array<{ nombre: string; descripcion: string; precioCompra: string; precioVenta: string; imagen: string }> = [];
+  searchTerm: string = ''; // Término de búsqueda
+  indexProductoEditado: number | null = null;
 
   constructor(private alertController: AlertController, private router: Router) {
     this.cargarProdcutosDeLocalStorage();
@@ -25,9 +27,9 @@ export class HomePage {
   /* -------------------------- LOGICA CRUD PRODUCTOS ------------------------- */
 
   async guardar() {
-    if(!this.nombre || !this.descripcion || !this.precioCompra || !this.precioVenta || !this.imagen) {
+    if (!this.nombre || !this.descripcion || !this.precioCompra || !this.precioVenta || !this.imagen) {
       await this.alerta("Error", "No puedes dejar campos vacios");
-      return; // salir de la funcion si hay campos vacios
+      return;
     }
 
     const producto = {
@@ -42,6 +44,7 @@ export class HomePage {
     this.guardarEnLocalStorage();
     this.limpiarCampos();
     this.alerta("Agregado", "producto agregado");
+    this.filtrarProductos(); // Actualizar lista filtrada
   }
 
   editar(index: number) {
@@ -51,13 +54,12 @@ export class HomePage {
     this.precioCompra = producto.precioCompra;
     this.precioVenta = producto.precioVenta;
     this.imagen = producto.imagen;
-    this.indexProductoEditado = index; // Guardar el índice del producto a editar
-    this.modal?.present(); // Abrir el modal
+    this.indexProductoEditado = index;
+    this.modal?.present();
   }
 
   confirmarEdicion() {
     if (this.indexProductoEditado !== null) {
-      // Actualizar el producto en la lista
       this.productos[this.indexProductoEditado] = {
         nombre: this.nombre,
         descripcion: this.descripcion,
@@ -65,15 +67,16 @@ export class HomePage {
         precioVenta: this.precioVenta,
         imagen: this.imagen
       };
-      this.guardarEnLocalStorage(); // Guardar los cambios en LocalStorage
-      this.modal?.dismiss(); // Cerrar el modal
+      this.guardarEnLocalStorage();
+      this.modal?.dismiss();
       this.limpiarCampos();
       this.indexProductoEditado = null;
+      this.filtrarProductos(); // Actualizar lista filtrada
     }
   }
 
   cancelarEdicion() {
-    this.modal?.dismiss(); // Cerrar el modal sin hacer cambios
+    this.modal?.dismiss();
     this.limpiarCampos();
     this.indexProductoEditado = null;
   }
@@ -82,24 +85,25 @@ export class HomePage {
     this.productos.splice(index, 1);
     this.guardarEnLocalStorage();
     this.alerta("Eliminado", "producto eliminador correctamente");
+    this.filtrarProductos(); // Actualizar lista filtrada
   }
 
   async alerta(header: string, message: string) {
-    const alert = await this.alertController.create ({
+    const alert = await this.alertController.create({
       header: header,
       message: message,
-      buttons: ["OK"]  
+      buttons: ["OK"]
     });
 
     await alert.present();
   }
 
   limpiarCampos() {
-    this.nombre = "",
-    this.descripcion = "",
-    this.precioCompra = "",
-    this.precioVenta = ""
-    this.imagen = ""
+    this.nombre = "";
+    this.descripcion = "";
+    this.precioCompra = "";
+    this.precioVenta = "";
+    this.imagen = "";
   }
 
   /* --------------------------- LOGICA LOCALSTORAGE -------------------------- */
@@ -110,13 +114,34 @@ export class HomePage {
 
   cargarProdcutosDeLocalStorage() {
     const productosLocalStorage = localStorage.getItem("productos");
-    if(productosLocalStorage)
+    if (productosLocalStorage) {
       this.productos = JSON.parse(productosLocalStorage);
+      this.filtrarProductos(); // Cargar productos y aplicar filtro
+    }
   }
 
   /* ---------------------------- LOGICA NAVEGACION --------------------------- */
 
   paginaUsuarios() {
     this.router.navigate(["/usuarios"]);
+  }
+
+  /* ------------------------ LOGICA BARRA DE BUSQUEDA ------------------------ */
+
+  buscar(event: any) {
+    const valorBusqueda = event.target.value;
+    this.searchTerm = valorBusqueda;
+    this.filtrarProductos();
+  }
+
+  filtrarProductos() {
+    if (!this.searchTerm.trim()) {
+      this.productosFiltrados = [...this.productos]; // Si no hay búsqueda, mostrar todos
+    } else {
+      const termino = this.searchTerm.toLowerCase();
+      this.productosFiltrados = this.productos.filter(producto => {
+        return producto.nombre.toLowerCase().includes(termino) || producto.descripcion.toLowerCase().includes(termino);
+      });
+    }
   }
 }

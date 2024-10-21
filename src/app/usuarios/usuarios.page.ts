@@ -16,7 +16,9 @@ export class UsuariosPage implements OnInit {
   telefono: string = "";
   imagen: string = "";
   usuarios: Array<{ nombre: string; direccion: string; correo: string; telefono: string; imagen: string }> = [];
-  indexUsuarioEditado: number | null = null; // Para guardar el índice del producto que estamos editando
+  usuariosFiltrados: Array<{ nombre: string; direccion: string; correo: string; telefono: string; imagen: string }> = [];
+  searchTerm: string = '';
+  indexUsuarioEditado: number | null = null;
 
   constructor(private alertController: AlertController, private router: Router) {
     this.cargarProdcutosDeLocalStorage();
@@ -60,7 +62,7 @@ export class UsuariosPage implements OnInit {
 
   confirmarEdicion() {
     if (this.indexUsuarioEditado !== null) {
-      // Actualizar el producto en la lista
+      // Actualizar el usuario en la lista
       this.usuarios[this.indexUsuarioEditado] = {
         nombre: this.nombre,
         direccion: this.direccion,
@@ -123,4 +125,20 @@ export class UsuariosPage implements OnInit {
     this.router.navigate(["home"]);
   }
 
+  buscar(event: any) {
+    const valorBusqueda = event.target.value;
+    this.searchTerm = valorBusqueda;
+    this.filtrarUsuarios();
+  }
+
+  filtrarUsuarios() {
+    if (!this.searchTerm.trim()) {
+      this.usuariosFiltrados = [...this.usuarios]; // Si no hay búsqueda, mostrar todos
+    } else {
+      const termino = this.searchTerm.toLowerCase();
+      this.usuariosFiltrados = this.usuarios.filter(usuario => {
+        return usuario.nombre.toLowerCase().includes(termino) || usuario.direccion.toLowerCase().includes(termino);
+      });
+    }
+  }
 }
